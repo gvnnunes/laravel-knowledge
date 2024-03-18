@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApiEventController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('events')->name('events.')->group(function () {
+    Route::get('/', [ApiEventController::class, 'index'])->name('index');
+    Route::get('/{event}', [ApiEventController::class, 'show'])->name('show');
+    Route::post('/', [ApiEventController::class, 'store'])->name('store');
+    Route::put('/{event}', [ApiEventController::class, 'update'])->name('update');
+    Route::delete('/{event}', [ApiEventController::class, 'destroy'])->name('destroy');
 });

@@ -17,7 +17,6 @@ class Event extends Model
         'location',
     ];
 
-    // Makes model convert to Carbon automatically
     protected $dates = ['date_time'];
 
     public function participants() : BelongsToMany
