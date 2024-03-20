@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApiEventCategoryController;
 use App\Http\Controllers\Api\ApiEventController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,12 @@ Route::prefix('events')->name('events.')->group(function () {
     Route::post('/', [ApiEventController::class, 'store'])->name('store');
     Route::put('/{event}', [ApiEventController::class, 'update'])->name('update');
     Route::delete('/{event}', [ApiEventController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('event-categories')->name('event-categories.')->group(function () {
+    Route::get('/', [ApiEventCategoryController::class, 'index'])->name('index');
+    Route::get('/{eventCategory}', [ApiEventCategoryController::class, 'show'])->name('show');
+    Route::post('/', [ApiEventCategoryController::class, 'store'])->name('store');
+    Route::put('/{eventCategory}', [ApiEventCategoryController::class, 'update'])->name('update');
+    Route::delete('/{eventCategory}', [ApiEventCategoryController::class, 'destroy'])->name('destroy');
 });

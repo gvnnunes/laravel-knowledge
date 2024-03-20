@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
-class StoreEventRequest extends FormRequest
+class UpdateEventCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +26,6 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:255'],
-            'description' => ['required', 'max:65535'],
-            'date_time' => ['required', 'date'],
-            'location' => ['required', 'max:255'],
         ];
     }
 

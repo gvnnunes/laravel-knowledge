@@ -7,6 +7,7 @@ use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiEventController extends Controller
@@ -25,9 +26,9 @@ class ApiEventController extends Controller
     {
         try {
             $event = Event::create($request->validated());
-            $event = new EventResource($event);
+            $eventResource = new EventResource($event);
 
-            return response()->json($event, Response::HTTP_OK);
+            return response()->json($eventResource, Response::HTTP_OK);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json([
                 'message' => 'Failed to create event'
@@ -39,10 +40,10 @@ class ApiEventController extends Controller
     {
         try {
             $event->update($request->validated());
-            $event = Event::with(['participants', 'speakers', 'eventCategories'])->where('id', $event->id)->first();
-            $event = new EventResource($event);
+            $event = $event->load(['participants', 'speakers', 'eventCategories']);
+            $eventResource = new EventResource($event);
 
-            return response()->json($event, Response::HTTP_OK);
+            return response()->json($eventResource, Response::HTTP_OK);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json([
                 'message' => 'Failed to update event'
@@ -52,13 +53,19 @@ class ApiEventController extends Controller
 
     public function destroy(Event $event)
     {
+        DB::beginTransaction();
+
         try {
             $event->delete();
+
+            DB::commit();
 
             return response()->json([
                 'message' => 'Event deleted successfully'
             ], Response::HTTP_OK);
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
                 'message' => 'Failed to delete event'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);

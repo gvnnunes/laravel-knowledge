@@ -26,20 +26,38 @@ class UpdateEventRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:255'],
-            'description' => ['required'], 'max:65535',
+            'description' => ['required', 'max:65535'],
             'date_time' => ['required', 'date'],
             'location' => ['required', 'max:255'],
         ];
     }
 
     /**
-     * Get the error messages for the defined validation rules.*
-     * @return array
+     * Get the error messages for the defined validation rules.
+     *
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     * @return void
+     *
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'errors' => $validator->errors(),
         ], Response::HTTP_BAD_REQUEST));
+    }
+
+    /**
+     * Handle a failed authorization attempt.
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
+     */
+    protected function failedAuthorization()
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Access denied',
+        ], Response::HTTP_UNAUTHORIZED));
     }
 }
