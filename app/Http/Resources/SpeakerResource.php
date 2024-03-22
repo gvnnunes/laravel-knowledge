@@ -18,6 +18,7 @@ class SpeakerResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'bio' => $this->bio,
+            'events' => EventResource::collection($this->whenLoaded('events')),
         ];
     }
 }

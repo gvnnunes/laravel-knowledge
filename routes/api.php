@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ApiEventCategoryController;
 use App\Http\Controllers\Api\ApiEventController;
 use App\Http\Controllers\Api\ApiParticipantController;
+use App\Http\Controllers\Api\ApiSpeakerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +40,12 @@ Route::prefix('participants')->name('participants.')->group(function () {
     Route::post('/', [ApiParticipantController::class, 'store'])->name('store');
     Route::put('/{participant}', [ApiParticipantController::class, 'update'])->name('update');
     Route::delete('/{participant}', [ApiParticipantController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('speakers')->name('speakers.')->group(function () {
+    Route::get('/', [ApiSpeakerController::class, 'index'])->name('index');
+    Route::get('/{speaker}', [ApiSpeakerController::class, 'show'])->name('show');
+    Route::post('/', [ApiSpeakerController::class, 'store'])->name('store');
+    Route::put('/{speaker}', [ApiSpeakerController::class, 'update'])->name('update');
+    Route::delete('/{speaker}', [ApiSpeakerController::class, 'destroy'])->name('destroy');
 });
