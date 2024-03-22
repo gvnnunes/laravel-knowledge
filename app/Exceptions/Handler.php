@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -30,6 +31,14 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => 'Record not found'
                 ], Response::HTTP_NOT_FOUND);
+            }
+        });
+
+        $this->renderable(function (MethodNotAllowedHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Method not allowed'
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
             }
         });
     }

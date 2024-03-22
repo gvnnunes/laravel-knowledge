@@ -19,6 +19,7 @@ class ParticipantResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'events' => EventResource::collection($this->whenLoaded('events'))
         ];
     }
 }

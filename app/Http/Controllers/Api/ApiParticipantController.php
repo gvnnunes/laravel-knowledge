@@ -3,9 +3,72 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreParticipantRequest;
+use App\Http\Requests\UpdateParticipantRequest;
+use App\Http\Resources\ParticipantResource;
+use App\Models\Participant;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiParticipantController extends Controller
 {
-    //
+    public function index()
+    {
+        return ParticipantResource::collection(Participant::all());
+    }
+
+    public function show(Participant $participant)
+    {
+        return new ParticipantResource($participant->loadMissing(['events']));
+    }
+
+    public function store(StoreParticipantRequest $request)
+    {
+        try {
+            $participant = Participant::create($request->validated());
+            $participantResource = new ParticipantResource($participant);
+
+            return response()->json($participantResource, Response::HTTP_OK);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to create participant'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function update(UpdateParticipantRequest $request, Participant $participant)
+    {
+        try {
+            $participant->update($request->validated());
+            $participant = $participant->load(['events']);
+            $participantResource = new ParticipantResource($participant);
+
+            return response()->json($participantResource, Response::HTTP_OK);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to update participant'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function destroy(Participant $participant)
+    {
+        DB::beginTransaction();
+
+        try {
+            $participant->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Participant deleted successfully'
+            ], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to delete participant'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
