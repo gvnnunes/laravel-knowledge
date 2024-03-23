@@ -8,25 +8,26 @@ use App\Http\Requests\UpdateParticipantRequest;
 use App\Http\Resources\ParticipantResource;
 use App\Models\Participant;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiParticipantController extends Controller
 {
-    public function index()
+    public function index(): ResourceCollection
     {
         return ParticipantResource::collection(Cache::remember('participants', Carbon::now()->endOfDay()->diffInSeconds(), function () {
             return Participant::all();
         }));
     }
 
-    public function show(Participant $participant)
+    public function show(Participant $participant): ParticipantResource
     {
         return new ParticipantResource($participant->loadMissing(['events']));
     }
 
-    public function store(StoreParticipantRequest $request)
+    public function store(StoreParticipantRequest $request): Response
     {
         try {
             $participant = Participant::create($request->validated());
@@ -40,7 +41,7 @@ class ApiParticipantController extends Controller
         }
     }
 
-    public function update(UpdateParticipantRequest $request, Participant $participant)
+    public function update(UpdateParticipantRequest $request, Participant $participant): Response
     {
         try {
             $participant->update($request->validated());
@@ -55,7 +56,7 @@ class ApiParticipantController extends Controller
         }
     }
 
-    public function destroy(Participant $participant)
+    public function destroy(Participant $participant): Response
     {
         DB::beginTransaction();
 

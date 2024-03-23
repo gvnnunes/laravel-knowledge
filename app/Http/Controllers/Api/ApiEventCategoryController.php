@@ -8,25 +8,26 @@ use App\Http\Requests\UpdateEventCategoryRequest;
 use App\Http\Resources\EventCategoryResource;
 use App\Models\EventCategory;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiEventCategoryController extends Controller
 {
-    public function index()
+    public function index(): ResourceCollection
     {
         return EventCategoryResource::collection(Cache::remember('eventCategories', Carbon::now()->endOfDay()->diffInSeconds(), function () {
             return EventCategory::all();
         }));
     }
 
-    public function show(EventCategory $eventCategory)
+    public function show(EventCategory $eventCategory): EventCategoryResource
     {
         return new EventCategoryResource($eventCategory->loadMissing(['events']));
     }
 
-    public function store(StoreEventCategoryRequest $request)
+    public function store(StoreEventCategoryRequest $request): Response
     {
         try {
             $eventCategory = EventCategory::create($request->validated());
@@ -40,7 +41,7 @@ class ApiEventCategoryController extends Controller
         }
     }
 
-    public function update(UpdateEventCategoryRequest $request, EventCategory $eventCategory)
+    public function update(UpdateEventCategoryRequest $request, EventCategory $eventCategory): Response
     {
         try {
             $eventCategory->update($request->validated());
@@ -55,7 +56,7 @@ class ApiEventCategoryController extends Controller
         }
     }
 
-    public function destroy(EventCategory $eventCategory)
+    public function destroy(EventCategory $eventCategory): Response
     {
         DB::beginTransaction();
 

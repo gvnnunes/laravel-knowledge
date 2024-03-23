@@ -11,25 +11,26 @@ use App\Models\EventCategory;
 use App\Models\Participant;
 use App\Models\Speaker;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiEventController extends Controller
 {
-    public function index()
+    public function index(): ResourceCollection
     {
         return EventResource::collection(Cache::remember('events', Carbon::now()->endOfDay()->diffInSeconds(), function () {
             return Event::all();
         }));
     }
 
-    public function show(Event $event)
+    public function show(Event $event): EventResource
     {
         return new EventResource($event->loadMissing(['participants', 'speakers', 'eventCategories']));
     }
 
-    public function store(StoreEventRequest $request)
+    public function store(StoreEventRequest $request): Response
     {
         try {
             $event = Event::create($request->validated());
@@ -43,7 +44,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function update(UpdateEventRequest $request, Event $event)
+    public function update(UpdateEventRequest $request, Event $event): Response
     {
         try {
             $event->update($request->validated());
@@ -58,7 +59,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function destroy(Event $event)
+    public function destroy(Event $event): Response
     {
         DB::beginTransaction();
 
@@ -79,7 +80,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function storeParticipant(Event $event, Participant $participant)
+    public function storeParticipant(Event $event, Participant $participant): Response
     {
         try {
             if (!$event->participants->contains($participant->id)) {
@@ -96,7 +97,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function storeSpeaker(Event $event, Speaker $speaker)
+    public function storeSpeaker(Event $event, Speaker $speaker): Response
     {
         try {
             if (!$event->speakers->contains($speaker->id)) {
@@ -113,7 +114,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function storeEventCategory(Event $event, EventCategory $eventCategory)
+    public function storeEventCategory(Event $event, EventCategory $eventCategory): Response
     {
         try {
             if (!$event->eventCategories->contains($eventCategory->id)) {
@@ -130,7 +131,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function destroyParticipant(Event $event, Participant $participant)
+    public function destroyParticipant(Event $event, Participant $participant): Response
     {
         try {
             if ($event->participants->contains($participant->id)) {
@@ -147,7 +148,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function destroySpeaker(Event $event, Speaker $speaker)
+    public function destroySpeaker(Event $event, Speaker $speaker): Response
     {
         try {
             if ($event->speakers->contains($speaker->id)) {
@@ -164,7 +165,7 @@ class ApiEventController extends Controller
         }
     }
 
-    public function destroyEventCategory(Event $event, EventCategory $eventCategory)
+    public function destroyEventCategory(Event $event, EventCategory $eventCategory): Response
     {
         try {
             if ($event->eventCategories->contains($eventCategory->id)) {

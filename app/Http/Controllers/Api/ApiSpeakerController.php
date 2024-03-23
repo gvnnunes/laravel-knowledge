@@ -8,25 +8,26 @@ use App\Http\Requests\UpdateSpeakerRequest;
 use App\Http\Resources\SpeakerResource;
 use App\Models\Speaker;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiSpeakerController extends Controller
 {
-    public function index()
+    public function index(): ResourceCollection
     {
         return SpeakerResource::collection(Cache::remember('speakers', Carbon::now()->endOfDay()->diffInSeconds(), function () {
             return Speaker::all();
         }));
     }
 
-    public function show(Speaker $speaker)
+    public function show(Speaker $speaker): SpeakerResource
     {
         return new SpeakerResource($speaker->loadMissing(['events']));
     }
 
-    public function store(StoreSpeakerRequest $request)
+    public function store(StoreSpeakerRequest $request): Response
     {
         try {
             $speaker = Speaker::create($request->validated());
@@ -40,7 +41,7 @@ class ApiSpeakerController extends Controller
         }
     }
 
-    public function update(UpdateSpeakerRequest $request, Speaker $speaker)
+    public function update(UpdateSpeakerRequest $request, Speaker $speaker): Response
     {
         try {
             $speaker->update($request->validated());
@@ -55,7 +56,7 @@ class ApiSpeakerController extends Controller
         }
     }
 
-    public function destroy(Speaker $speaker)
+    public function destroy(Speaker $speaker): Response
     {
         DB::beginTransaction();
 
