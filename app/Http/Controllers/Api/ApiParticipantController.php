@@ -7,6 +7,8 @@ use App\Http\Requests\StoreParticipantRequest;
 use App\Http\Requests\UpdateParticipantRequest;
 use App\Http\Resources\ParticipantResource;
 use App\Models\Participant;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +16,9 @@ class ApiParticipantController extends Controller
 {
     public function index()
     {
-        return ParticipantResource::collection(Participant::all());
+        return ParticipantResource::collection(Cache::remember('participants', Carbon::now()->endOfDay()->diffInSeconds(), function () {
+            return Participant::all();
+        }));
     }
 
     public function show(Participant $participant)

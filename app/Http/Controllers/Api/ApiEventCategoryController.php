@@ -7,6 +7,8 @@ use App\Http\Requests\StoreEventCategoryRequest;
 use App\Http\Requests\UpdateEventCategoryRequest;
 use App\Http\Resources\EventCategoryResource;
 use App\Models\EventCategory;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +16,9 @@ class ApiEventCategoryController extends Controller
 {
     public function index()
     {
-        return EventCategoryResource::collection(EventCategory::all());
+        return EventCategoryResource::collection(Cache::remember('eventCategories', Carbon::now()->endOfDay()->diffInSeconds(), function () {
+            return EventCategory::all();
+        }));
     }
 
     public function show(EventCategory $eventCategory)

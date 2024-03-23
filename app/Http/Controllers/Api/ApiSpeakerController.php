@@ -7,6 +7,8 @@ use App\Http\Requests\StoreSpeakerRequest;
 use App\Http\Requests\UpdateSpeakerRequest;
 use App\Http\Resources\SpeakerResource;
 use App\Models\Speaker;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +16,9 @@ class ApiSpeakerController extends Controller
 {
     public function index()
     {
-        return SpeakerResource::collection(Speaker::all());
+        return SpeakerResource::collection(Cache::remember('speakers', Carbon::now()->endOfDay()->diffInSeconds(), function () {
+            return Speaker::all();
+        }));
     }
 
     public function show(Speaker $speaker)

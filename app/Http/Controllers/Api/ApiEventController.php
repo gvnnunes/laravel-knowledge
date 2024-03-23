@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreEventParticipantRequest;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
@@ -11,6 +10,8 @@ use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\Participant;
 use App\Models\Speaker;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +19,9 @@ class ApiEventController extends Controller
 {
     public function index()
     {
-        return EventResource::collection(Event::all());
+        return EventResource::collection(Cache::remember('events', Carbon::now()->endOfDay()->diffInSeconds(), function () {
+            return Event::all();
+        }));
     }
 
     public function show(Event $event)
