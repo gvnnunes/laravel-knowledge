@@ -20,4 +20,9 @@ class Participant extends Model
     {
         return $this->belongsToMany(Event::class)->withTimestamps();
     }
+
+    public function readableModelName()
+    {
+        return 'Participant';
+    }
 }

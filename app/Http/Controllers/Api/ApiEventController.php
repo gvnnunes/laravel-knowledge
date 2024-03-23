@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEventParticipantRequest;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use App\Models\EventCategory;
+use App\Models\Participant;
+use App\Models\Speaker;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -68,6 +72,108 @@ class ApiEventController extends Controller
 
             return response()->json([
                 'message' => 'Failed to delete event'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function storeParticipant(Event $event, Participant $participant)
+    {
+        try {
+            if (!$event->participants->contains($participant->id)) {
+                $event->participants()->attach($participant->id);
+
+                return response()->json(['message' => 'Participant successfully added to the event'], Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Participant already exists on the event'], Response::HTTP_CONFLICT);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to add participant on the event'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function storeSpeaker(Event $event, Speaker $speaker)
+    {
+        try {
+            if (!$event->speakers->contains($speaker->id)) {
+                $event->speakers()->attach($speaker->id);
+
+                return response()->json(['message' => 'Speaker successfully added to the event'], Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Speaker already exists on the event'], Response::HTTP_CONFLICT);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to add speaker on the event'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function storeEventCategory(Event $event, EventCategory $eventCategory)
+    {
+        try {
+            if (!$event->eventCategories->contains($eventCategory->id)) {
+                $event->eventCategories()->attach($eventCategory->id);
+
+                return response()->json(['message' => 'Event category successfully added to the event'], Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Event category already exists on the event'], Response::HTTP_CONFLICT);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to add event category on the event'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function destroyParticipant(Event $event, Participant $participant)
+    {
+        try {
+            if ($event->participants->contains($participant->id)) {
+                $event->participants()->detach($participant->id);
+
+                return response()->json(['message' => 'Participant successfully deleted from the event'], Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Participant does not exist on the event'], Response::HTTP_CONFLICT);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to deleted participant from the event'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function destroySpeaker(Event $event, Speaker $speaker)
+    {
+        try {
+            if ($event->speakers->contains($speaker->id)) {
+                $event->speakers()->detach($speaker->id);
+
+                return response()->json(['message' => 'Speaker successfully deleted from the event'], Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Speaker does not exist on the event'], Response::HTTP_CONFLICT);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to add speaker from the event'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function destroyEventCategory(Event $event, EventCategory $eventCategory)
+    {
+        try {
+            if ($event->eventCategories->contains($eventCategory->id)) {
+                $event->eventCategories()->detach($eventCategory->id);
+
+                return response()->json(['message' => 'Event category successfully deleted from the event'], Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Event category does not exist on the event'], Response::HTTP_CONFLICT);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Failed to add event category from the event'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

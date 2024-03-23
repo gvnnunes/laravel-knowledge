@@ -2,6 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Models\Event;
+use App\Models\EventCategory;
+use App\Models\Participant;
+use App\Models\Speaker;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +32,23 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->renderable(function (NotFoundHttpException $e, Request $request) {
+            $previous = $e->getPrevious();
+
+            if ($previous instanceof ModelNotFoundException) {
+                $model = app()->make($previous->getModel());
+
+                if (
+                    $model instanceof Event
+                    || $model instanceof Participant
+                    || $model instanceof Speaker
+                    || $model instanceof EventCategory
+                ) {
+                    return response()->json([
+                        'message' => $model->readableModelName() . ' not found'
+                    ], Response::HTTP_NOT_FOUND);
+                }
+            }
+
             if ($request->is('api/*')) {
                 return response()->json([
                     'message' => 'Record not found'

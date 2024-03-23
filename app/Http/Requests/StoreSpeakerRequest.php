@@ -2,12 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Symfony\Component\HttpFoundation\Response;
-
-class StoreSpeakerRequest extends FormRequest
+class StoreSpeakerRequest extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,34 +23,5 @@ class StoreSpeakerRequest extends FormRequest
             'name' => ['required', 'max:255'],
             'bio' => ['required', 'max:65535'],
         ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @param \Illuminate\Contracts\Validation\Validator $validator
-     * @return void
-     *
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors(),
-        ], Response::HTTP_BAD_REQUEST));
-    }
-
-    /**
-     * Handle a failed authorization attempt.
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     */
-    protected function failedAuthorization()
-    {
-        throw new HttpResponseException(response()->json([
-            'message' => 'Access denied',
-        ], Response::HTTP_UNAUTHORIZED));
     }
 }

@@ -18,4 +18,9 @@ class EventCategory extends Model
     {
         return $this->belongsToMany(Event::class)->withTimestamps();
     }
+
+    public function readableModelName()
+    {
+        return 'Event category';
+    }
 }
