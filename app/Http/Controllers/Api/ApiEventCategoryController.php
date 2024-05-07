@@ -18,7 +18,7 @@ class ApiEventCategoryController extends Controller
     public function index(): ResourceCollection
     {
         return EventCategoryResource::collection(Cache::remember('eventCategories', Carbon::now()->endOfDay()->diffInSeconds(), function () {
-            return EventCategory::all();
+            return EventCategory::orderBy('id', 'asc')->get();
         }));
     }
 

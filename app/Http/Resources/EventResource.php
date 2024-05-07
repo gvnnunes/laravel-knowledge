@@ -21,9 +21,11 @@ class EventResource extends JsonResource
             'description' => $this->description,
             'date_time' => Carbon::parse($this->date_time)->format('Y-m-d H:i:s'),
             'location' => $this->location,
+            'capacity' => $this->capacity,
             'participants' => ParticipantResource::collection($this->whenLoaded('participants')),
             'speakers' => SpeakerResource::collection($this->whenLoaded('speakers')),
             'event_categories' => EventCategoryResource::collection($this->whenLoaded('eventCategories')),
+            'participants_count' => $this->participants_count,
         ];
     }
 }

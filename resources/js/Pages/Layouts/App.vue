@@ -1,79 +1,66 @@
 <template>
     <v-app id="inspire">
-        <v-app-bar flat>
-            <v-container class="mx-auto d-flex align-center justify-center">
-                <v-avatar
-                    class="me-4"
-                    color="grey-darken-1"
-                    size="32"
-                ></v-avatar>
-
-                <v-btn
-                    v-for="link in links"
-                    :key="link"
-                    :text="link"
-                    variant="text"
-                ></v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-responsive max-width="160">
+        <v-app-bar color="cyan-darken-3" :elevation="2" density="compact">
+            <v-container>
+                <v-responsive max-width="400">
                     <v-text-field
                         density="compact"
                         label="Search"
-                        rounded="lg"
-                        variant="solo-filled"
-                        flat
+                        variant="outlined"
+                        append-inner-icon="mdi-magnify"
                         hide-details
                         single-line
+                        flat
+                        clearable
                     ></v-text-field>
                 </v-responsive>
             </v-container>
+
+            <v-spacer></v-spacer>
+
+            <v-toolbar-items class="d-none d-md-flex">
+                <v-btn
+                    v-for="link in links"
+                    :text="link.text"
+                    :active="link.active"
+                    :to="link.route"
+                    :color="link.color"
+                ></v-btn>
+            </v-toolbar-items>
+
+            <div class="d-sm-flex d-md-none">
+                <v-app-bar-nav-icon></v-app-bar-nav-icon>
+            </div>
         </v-app-bar>
 
         <v-main class="bg-grey-lighten-3">
             <v-container>
-                <v-row>
-                    <v-col cols="2">
-                        <v-sheet rounded="lg">
-                            <v-list rounded="lg">
-                                <v-list-item
-                                    v-for="n in 5"
-                                    :key="n"
-                                    :title="`List Item ${n}`"
-                                    link
-                                ></v-list-item>
-
-                                <v-divider class="my-2"></v-divider>
-
-                                <v-list-item
-                                    color="grey-lighten-4"
-                                    title="Refresh"
-                                    link
-                                ></v-list-item>
-                            </v-list>
-                        </v-sheet>
-                    </v-col>
-
-                    <v-col>
-                        <v-sheet min-height="70vh" rounded="lg">
-                            <!--  -->
-                        </v-sheet>
-                    </v-col>
-                </v-row>
+                <slot />
             </v-container>
         </v-main>
     </v-app>
 </template>
 
-<script setup>
-const links = ["Dashboard", "Messages", "Profile", "Updates"];
-</script>
-
 <script>
 export default {
     data: () => ({
-        links: ["Dashboard", "Messages", "Profile", "Updates"],
+        links: [],
     }),
+    mounted() {
+        this.links = [
+            {
+                text: "Events",
+                active: this.$page.component.startsWith("Events"),
+                route: route("events.index"),
+                color: '',
+            },
+            {
+                text: "Manage",
+                active: this.$page.component.startsWith("Manage"),
+                route: "#",
+                color: "orange-lighten-1",
+            },
+        ];
+    },
 };
 </script>

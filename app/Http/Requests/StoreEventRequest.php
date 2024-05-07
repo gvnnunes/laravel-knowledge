@@ -24,6 +24,7 @@ class StoreEventRequest extends BaseFormRequest
             'description' => ['required', 'max:65535'],
             'date_time' => ['required', 'date'],
             'location' => ['required', 'max:255'],
+            'capacity' => ['required', 'integer', 'between:1,255'],
         ];
     }
 }

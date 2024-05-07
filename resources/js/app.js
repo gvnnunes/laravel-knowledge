@@ -3,16 +3,9 @@ import "./bootstrap";
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 
-// Vuetify
-import "vuetify/styles";
-import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
-
-const vuetify = createVuetify({
-    components,
-    directives,
-});
+import vuetify from "@/Plugins/vuetify";
+// Create a global attribute ":to" that will be used as inertia link
+import link from "@/Plugins/link";
 
 createInertiaApp({
     resolve: (name) => {
@@ -23,6 +16,13 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(vuetify)
+            .use(link)
             .mount(el);
     },
+    progress: {
+        delay: 250,
+        color: '#EEEEEE',
+        includeCSS: true,
+        showSpinner: false,
+      },
 });

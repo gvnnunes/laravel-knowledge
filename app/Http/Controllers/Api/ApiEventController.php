@@ -21,7 +21,7 @@ class ApiEventController extends Controller
     public function index(): ResourceCollection
     {
         return EventResource::collection(Cache::remember('events', Carbon::now()->endOfDay()->diffInSeconds(), function () {
-            return Event::all();
+            return Event::withCount('participants')->orderBy('id', 'desc')->get();
         }));
     }
 

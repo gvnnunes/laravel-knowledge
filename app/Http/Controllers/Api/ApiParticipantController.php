@@ -18,7 +18,7 @@ class ApiParticipantController extends Controller
     public function index(): ResourceCollection
     {
         return ParticipantResource::collection(Cache::remember('participants', Carbon::now()->endOfDay()->diffInSeconds(), function () {
-            return Participant::all();
+            return Participant::orderBy('id', 'asc')->get();
         }));
     }
 

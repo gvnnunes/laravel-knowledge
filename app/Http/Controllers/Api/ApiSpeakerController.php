@@ -18,7 +18,7 @@ class ApiSpeakerController extends Controller
     public function index(): ResourceCollection
     {
         return SpeakerResource::collection(Cache::remember('speakers', Carbon::now()->endOfDay()->diffInSeconds(), function () {
-            return Speaker::all();
+            return Speaker::orderBy('id', 'asc')->get();
         }));
     }
 

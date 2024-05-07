@@ -6,14 +6,18 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "autoprefixer": "^10.4.19",
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^1.0.0",
+        "postcss": "^8.4.38",
+        "tailwindcss": "^3.4.1",
         "vite": "^5.0.0"
     },
     "dependencies": {
         "@inertiajs/vue3": "^1.0.15",
         "@mdi/font": "^7.4.47",
         "@vitejs/plugin-vue": "^5.0.4",
+        "vite-plugin-vuetify": "^2.0.3",
         "vue": "^3.4.21",
         "vue-loader": "^17.4.2",
         "vuetify": "^3.5.11"

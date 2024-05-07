@@ -17,20 +17,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Event::factory()
-            ->hasAttached(
-                Participant::factory()->count(rand(3, 10)),
-                [],
-            )
-            ->hasAttached(
-                Speaker::factory()->count(rand(1, 4)),
-                [],
-            )
-            ->hasAttached(
-                EventCategory::factory()->count(rand(1, 3)),
-                [],
-            )
-            ->count(5)
-            ->create();
+        $events = Event::factory()->count(20)->create();
+        $participants = Participant::factory()->count(100)->create();
+        $speakers = Speaker::factory()->count(20)->create();
+        $eventCategories = EventCategory::factory()->count(10)->create();
+
+
+        $events->map(function ($event) use ($participants, $speakers, $eventCategories) {
+            $participantIds = $participants->pluck('id')->shuffle()->slice(0, rand(1, $event->capacity))->all();
+            $speakerIds = $speakers->pluck('id')->shuffle()->slice(0, rand(1, 5))->all();
+            $categoryIds = $eventCategories->pluck('id')->shuffle()->slice(0, rand(1, 3))->all();
+
+            $event->participants()->attach($participantIds);
+            $event->speakers()->attach($speakerIds);
+            $event->eventCategories()->attach($categoryIds);
+        });
     }
 }

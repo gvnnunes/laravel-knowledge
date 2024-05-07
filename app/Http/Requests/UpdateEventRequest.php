@@ -40,6 +40,11 @@ class UpdateEventRequest extends BaseFormRequest
                     $fail('The ' . $attribute . ' field cannot be empty');
                 }
             }],
+            'capacity' => ['integer', 'between:1,255', function ($attribute, $value, $fail) {
+                if ($this->has($attribute) && empty($value)) {
+                    $fail('The ' . $attribute . ' field cannot be empty');
+                }
+            }],
         ];
     }
 }
