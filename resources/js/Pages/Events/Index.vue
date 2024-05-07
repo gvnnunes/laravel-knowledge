@@ -43,7 +43,10 @@
                         >
                             <template v-slot:item.description="{ item }">
                                 <template v-if="item.description.length > 100">
-                                    <v-tooltip :text="item.description">
+                                    <v-tooltip
+                                        :text="item.description"
+                                        max-width="300px"
+                                    >
                                         <template v-slot:activator="{ props }">
                                             <p v-bind="props">
                                                 {{
